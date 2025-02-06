@@ -1,0 +1,45 @@
+<!-- main/templates/main/home.html -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Торги</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .sections {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .section-card {
+            padding: 20px;
+            border: 1px solid #ccc;
+            text-align: center;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            width: 200px;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+        .section-card:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ласкаво просимо на платформу для торгів!</h1>
+    <p>Виберіть один з розділів:</p>
+    <div class="sections">
+        <a href="{% url 'stocks' %}"><div class="section-card">Торги акціями</div></a>
+        <a href="{% url 'crypto' %}"><div class="section-card">Торги криптовалютою</div></a>
+        <a href="{% url 'funds' %}"><div class="section-card">Торги фондами</div></a>
+        <a href="{% url 'currency' %}"><div class="section-card">Торги валютою</div></a>
+    </div>
+</body>
+</html>

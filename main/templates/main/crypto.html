@@ -1,0 +1,125 @@
+<!-- main/templates/main/crypto.html -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Торги криптовалютою</title>
+    <style>
+        /* Стилі для сторінки */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .chart-container {
+            width: 70%;
+            height: 500px;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        .crypto-list {
+            width: 25%;
+            padding-left: 20px;
+        }
+
+        .crypto-list h3 {
+            margin-top: 0;
+        }
+
+        .crypto-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .crypto-list li {
+            margin-bottom: 10px;
+        }
+
+        .crypto-list a {
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .crypto-list a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Ліва частина: графік -->
+    <div class="chart-container">
+        <canvas id="cryptoChart"></canvas>
+    </div>
+
+    <!-- Права частина: список криптовалют -->
+    <div class="crypto-list">
+        <h3>Виберіть криптовалюту</h3>
+        <ul id="cryptoList">
+            {% for crypto in paginated_cryptos %}
+                <li>
+                    <a href="#" onclick="updateChart('{{ crypto.symbol }}'); return false;">
+                        {{ crypto.symbol }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let chartInstance = null;
+
+        // Оновлення графіка для вибраної криптовалюти
+        function updateChart(symbol) {
+            fetch(`/crypto/chart/?crypto=${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    const prices = data.history.map(entry => entry.price);
+                    const times = data.history.map(entry => new Date(entry.time).toLocaleTimeString());
+
+                    if (chartInstance) {
+                        chartInstance.destroy();
+                    }
+
+                    const ctx = document.getElementById("cryptoChart").getContext("2d");
+                    chartInstance = new Chart(ctx, {
+                        type: "line",
+                        data: {
+                            labels: times,
+                            datasets: [{
+                                label: symbol,
+                                data: prices,
+                                borderColor: "rgb(75, 192, 192)",
+                                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                                borderWidth: 2,
+                                pointRadius: 0,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    min: Math.min(...prices) * 0.98,  // Мінімум трохи нижче найменшого значення
+                                    max: Math.max(...prices) * 1.02,  // Максимум трохи вище найбільшого значення
+                                    beginAtZero: false
+                                }
+                            }
+                        }
+                    });
+                });
+        }
+
+        // Завантаження графіка для BTCUSDT по замовчуванню
+        updateChart("BTCUSDT");
+    </script>
+</body>
+</html>
