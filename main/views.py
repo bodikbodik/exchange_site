@@ -6,6 +6,9 @@ from .services import get_crypto_data, get_crypto_chart
 def home(request):
     return render(request, 'main/home.html')
 
+def about(request):
+    return render(request, 'main/about.html')
+
 def stocks(request):
     return render(request, 'main/stocks.html')
 
