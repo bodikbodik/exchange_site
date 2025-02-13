@@ -1,33 +1,30 @@
 # main/services.py
 import requests
+from .models import Crypto
 
-def get_crypto_data(page=1, per_page=10):
-    """
-    Функція для отримання даних криптовалют з Binance API
-    і повернення криптовалют на заданій сторінці.
-    """
+def get_crypto_data():
     url = "https://api.binance.com/api/v3/ticker/24hr"
-
     try:
         response = requests.get(url)
-        response.raise_for_status()
+        response.raise_for_status()  # Перевірка на помилки
         data = response.json()
 
         # Фільтруємо пари криптовалют до USDT
         crypto_pairs = [crypto for crypto in data if crypto['symbol'].endswith('USDT')]
 
-        total_cryptos = len(crypto_pairs)  # Загальна кількість криптовалют
-        total_pages = max(1, (total_cryptos + per_page - 1) // per_page)
-
-        # Розбиваємо на сторінки
-        start = (page - 1) * per_page
-        end = start + per_page
-        paginated_cryptos = crypto_pairs[start:end]
-
-        return paginated_cryptos, total_pages
+        # Зберігаємо дані в базу
+        for crypto in crypto_pairs:
+            Crypto.objects.update_or_create(
+                symbol=crypto['symbol'],
+                defaults={
+                    'price': crypto['lastPrice'],
+                    'volume': crypto['volume'],
+                    'high_24h': crypto['highPrice'],
+                    'low_24h': crypto['lowPrice'],
+                }
+            )
     except requests.exceptions.RequestException as e:
         print(f"Помилка запиту до Binance: {e}")
-        return [], 0
 
 
 def get_crypto_chart(symbol='BTCUSDT', interval='1m', limit=50):

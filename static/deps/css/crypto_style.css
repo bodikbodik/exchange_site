@@ -1,0 +1,96 @@
+/* Сучасні стилі для графіка та списку криптовалют */
+
+/* Стилі контейнера для графіка */
+.chart-container {
+    position: relative;
+    height: 500px;
+    width: 1000px;
+    background: linear-gradient(45deg, rgba(75, 192, 192, 0.2), rgba(255, 255, 255, 0.5));
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    margin-left: -300px;
+}
+
+/* Стилі для заголовків секцій */
+.section-title {
+    font-size: 24px;
+    color: #00796b;
+    margin-bottom: 15px;
+}
+
+/* Стилі для списку криптовалют */
+.crypto-list {
+    list-style: none;
+    padding: 0;
+    
+}
+
+.crypto-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 12px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.crypto-item:hover {
+    background-color: #e0f7fa;
+    transform: translateX(5px);
+}
+
+/* Іконка криптовалюти */
+.crypto-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+/* Стилі для тексту */
+.crypto-item a {
+    text-decoration: none;
+    color: #00796b;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.crypto-item a:hover {
+    text-decoration: underline;
+}
+
+/* Стилі пагінації */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+.pagination span, .pagination a {
+    padding: 10px 20px;
+    margin: 0 5px;
+    background-color: #00796b;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination span:hover, .pagination a:hover {
+    background-color: #004d40;
+}
+
+/* Мобільна адаптивність */
+@media (max-width: 768px) {
+    .col-md-8, .col-md-4 {
+        width: 100%;
+    }
+
+    .chart-container {
+        height: 300px; /* Зменшена висота для мобільних пристроїв */
+    }
+}

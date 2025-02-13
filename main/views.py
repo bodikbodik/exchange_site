@@ -1,3 +1,5 @@
+from django.core.paginator import Paginator
+
 from django.shortcuts import render
 from django.http import JsonResponse
 from .services import get_crypto_data, get_crypto_chart
@@ -13,11 +15,18 @@ def stocks(request):
     return render(request, 'main/stocks.html')
 
 
+
 def crypto(request):
-    # Отримуємо дані криптовалют
-    crypto_data, total_pages = get_crypto_data()
+    # Отримуємо номер сторінки, або встановлюємо 1 за замовчуванням
+    page_number = request.GET.get('page', 1)
+    crypto_data, total_pages = get_crypto_data(page=int(page_number))
+
+    # Створюємо Paginator для пагінації
+    paginator = Paginator(crypto_data, 10)  # 10 криптовалют на сторінку
+    page = paginator.get_page(page_number)
+
     return render(request, 'main/crypto.html', {
-        'paginated_cryptos': crypto_data,
+        'paginated_cryptos': page,
         'total_pages': total_pages,
     })
 

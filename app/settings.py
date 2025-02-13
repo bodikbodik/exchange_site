@@ -76,12 +76,29 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+# settings.py
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'exchange1',         # Назва вашої бази даних
+        'USER': 'exchange1',         # Ім'я користувача
+        'PASSWORD': 'exchange1', # Ваш пароль
+        'HOST': 'localhost',            # Хост (для локального серверу — 'localhost')
+        'PORT': '5432',                 # Порт (за замовчуванням — 5432)
     }
 }
+
+
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
