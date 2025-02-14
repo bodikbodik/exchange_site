@@ -1,115 +1,37 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Crypto - World Trade{% endblock %}
-
-{% block content %}  
-
-  <!-- Підключення зовнішнього CSS файлу -->
-  <link rel="stylesheet" href="{% static 'deps/css/crypto_style.css' %}">
-
-  <div class="container">
-    <div class="row">
-      
-      <!-- Ліва частина: графік (70% ширини) -->
-      <div class="col-md-8">
-        <div class="chart-container">
-          <canvas id="cryptoChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Права частина: список криптовалют з пагінацією (30% ширини) -->
-      <div class="col-md-4">
-        <h3 class="section-title">Виберіть криптовалюту</h3>
-        <ul id="cryptoList" class="crypto-list">
-            {% for crypto in paginated_cryptos %}
-                <li class="crypto-item">
-                    <a href="#" onclick="updateChart('{{ crypto.symbol }}'); return false;">
-
-                        <span>{{ crypto.symbol }}</span>
-                    </a>
-                </li>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Dashboard</title>
+</head>
+<body>
+    <h1>Crypto Data</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Price</th>
+                <th>Market Cap</th>
+                <th>24h Volume</th>
+                <th>High 24h</th>
+                <th>Low 24h</th>
+                <th>Change 24h</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for crypto in cryptos %}
+                <tr>
+                    <td>{{ crypto.symbol }}</td>
+                    <td>{{ crypto.price }}</td>
+                    <td>{{ crypto.market_cap }}</td>
+                    <td>{{ crypto.volume_24h }}</td>
+                    <td>{{ crypto.high_24h }}</td>
+                    <td>{{ crypto.low_24h }}</td>
+                    <td>{{ crypto.change_24h }}</td>
+                </tr>
             {% endfor %}
-        </ul>
-
-        <!-- Пагінація -->
-        <div class="pagination">
-            <span class="previous">
-                {% if paginated_cryptos.has_previous %}
-                    <a href="?page={{ paginated_cryptos.previous_page_number }}">« Previous</a>
-                {% else %}
-                    <span>« Previous</span>
-                {% endif %}
-            </span>
-
-            <span class="next">
-                {% if paginated_cryptos.has_next %}
-                    <a href="?page={{ paginated_cryptos.next_page_number }}">Next »</a>
-                {% else %}
-                    <span>Next »</span>
-                {% endif %}
-            </span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-      let chartInstance = null;
-
-      // Оновлення графіка для вибраної криптовалюти
-      function updateChart(symbol) {
-          fetch(`/crypto/chart/?crypto=${symbol}`)
-              .then(response => response.json())
-              .then(data => {
-                  const prices = data.history.map(entry => entry.price);
-                  const times = data.history.map(entry => new Date(entry.time).toLocaleTimeString());
-
-                  if (chartInstance) {
-                      chartInstance.destroy();
-                  }
-
-                  const ctx = document.getElementById("cryptoChart").getContext("2d");
-                  chartInstance = new Chart(ctx, {
-                      type: "line",
-                      data: {
-                          labels: times,
-                          datasets: [{
-                              label: symbol,
-                              data: prices,
-                              borderColor: "rgb(75, 192, 192)",
-                              backgroundColor: "rgba(75, 192, 192, 0.2)",
-                              borderWidth: 2,
-                              pointRadius: 0,
-                              tension: 0.4, // Плавність лінії
-                          }]
-                      },
-                      options: {
-                          responsive: true,
-                          maintainAspectRatio: false,
-                          scales: {
-                              y: {
-                                  min: Math.min(...prices) * 0.98,
-                                  max: Math.max(...prices) * 1.02,
-                                  beginAtZero: false
-                              }
-                          },
-                          plugins: {
-                              tooltip: {
-                                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                                  titleColor: '#fff',
-                                  bodyColor: '#fff',
-                              }
-                          }
-                      }
-                  });
-              });
-      }
-
-      // Завантаження графіка для BTCUSDT по замовчуванню
-      updateChart("BTCUSDT");
-  </script>
-
-{% endblock %}
+        </tbody>
+    </table>
+</body>
+</html>

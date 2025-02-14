@@ -1,52 +1,75 @@
-# main/services.py
-import requests
-from .models import Crypto
+import asyncio
+import aiohttp
+from asgiref.sync import sync_to_async
+from main.models import Crypto
 
-def get_crypto_data():
-    url = "https://api.binance.com/api/v3/ticker/24hr"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Перевірка на помилки
-        data = response.json()
+BINANCE_API_URL = "https://api.binance.com/api/v3/ticker/24hr"
 
-        # Фільтруємо пари криптовалют до USDT
-        crypto_pairs = [crypto for crypto in data if crypto['symbol'].endswith('USDT')]
+# Основна асинхронна функція для отримання даних
+async def fetch_crypto_data():
+    async with aiohttp.ClientSession() as session:
+        async with session.get(BINANCE_API_URL) as response:
+            if response.status == 200:
+                data = await response.json()
 
-        # Зберігаємо дані в базу
-        for crypto in crypto_pairs:
-            Crypto.objects.update_or_create(
-                symbol=crypto['symbol'],
-                defaults={
-                    'price': crypto['lastPrice'],
-                    'volume': crypto['volume'],
-                    'high_24h': crypto['highPrice'],
-                    'low_24h': crypto['lowPrice'],
-                }
-            )
-    except requests.exceptions.RequestException as e:
-        print(f"Помилка запиту до Binance: {e}")
+                # Створимо список символів для видалення та дані для оновлення
+                symbols_to_delete = []
+                crypto_data_to_update = []
 
+                for item in data:
+                    symbol = item['symbol']
+                    volume_24h = float(item.get('volume', 0))
 
-def get_crypto_chart(symbol='BTCUSDT', interval='1m', limit=50):
-    """
-    Функція для отримання історичних даних про криптовалюту для графіка
-    """
-    url = f"https://api.binance.com/api/v3/klines"
-    params = {
-        'symbol': symbol,
-        'interval': interval,
-        'limit': limit,
-    }
+                    # Якщо об'єм за 24 години = 0, додаємо в список для видалення
+                    if volume_24h == 0:
+                        symbols_to_delete.append(symbol)
+                    else:
+                        price = float(item['lastPrice'])
+                        market_cap = int(float(item.get('quoteVolume', 0)))
+                        high_24h = float(item.get('highPrice', 0))
+                        low_24h = float(item.get('lowPrice', 0))
+                        change_24h = float(item.get('priceChangePercent', 0))
 
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        data = response.json()
+                        crypto_data_to_update.append({
+                            'symbol': symbol,
+                            'price': price,
+                            'market_cap': market_cap,
+                            'volume_24h': volume_24h,
+                            'high_24h': high_24h,
+                            'low_24h': low_24h,
+                            'change_24h': change_24h,
+                        })
 
-        # Обробляємо дані для графіка
-        history = [{"time": entry[0], "price": entry[4]} for entry in data]
+                # Видалення криптовалют без торгів за 24 години за один запит
+                if symbols_to_delete:
+                    await delete_cryptos(symbols_to_delete)
 
-        return history
-    except requests.exceptions.RequestException as e:
-        print(f"Помилка запиту до Binance: {e}")
-        return []
+                # Оновлення/додавання криптовалют в базу
+                for crypto_data in crypto_data_to_update:
+                    await update_or_create_crypto(crypto_data)
+
+            else:
+                print("Помилка отримання даних з Binance")
+
+# Асинхронне видалення криптовалют
+@sync_to_async
+def delete_cryptos(symbols):
+    Crypto.objects.filter(symbol__in=symbols).delete()
+    print(f"Видалено криптовалюти без торгів: {', '.join(symbols)}")
+
+# Асинхронне оновлення або додавання криптовалют
+@sync_to_async
+def update_or_create_crypto(crypto_data):
+    Crypto.objects.update_or_create(
+        symbol=crypto_data['symbol'],
+        defaults=crypto_data
+    )
+    print(f"Оновлено/створено: {crypto_data['symbol']}")
+
+# Запуск асинхронної функції
+async def main():
+    await fetch_crypto_data()
+
+# Для запуску
+if __name__ == "__main__":
+    asyncio.run(main())
