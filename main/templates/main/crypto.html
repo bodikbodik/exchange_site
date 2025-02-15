@@ -1,37 +1,205 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Dashboard</title>
-</head>
-<body>
-    <h1>Crypto Data</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Symbol</th>
-                <th>Price</th>
-                <th>Market Cap</th>
-                <th>24h Volume</th>
-                <th>High 24h</th>
-                <th>Low 24h</th>
-                <th>Change 24h</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for crypto in cryptos %}
-                <tr>
-                    <td>{{ crypto.symbol }}</td>
-                    <td>{{ crypto.price }}</td>
-                    <td>{{ crypto.market_cap }}</td>
-                    <td>{{ crypto.volume_24h }}</td>
-                    <td>{{ crypto.high_24h }}</td>
-                    <td>{{ crypto.low_24h }}</td>
-                    <td>{{ crypto.change_24h }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Crypto - Crypto Dashboard{% endblock %}
+
+{% block content %}
+<h1>Торги криптовалютою</h1>
+
+<link href="{% static 'deps/css/crypto_style.css' %}" rel="stylesheet" />
+
+<section class="crypto_data_section">
+    <div class="title-container">
+        <!-- Тонка лінія для інформації про криптовалюту -->
+        <div id="crypto-info" class="crypto-info-line">
+            <span id="crypto-symbol">{{ btc_info.symbol }}</span>
+            <span id="crypto-name">{{ crypto_info.name }}</span>
+            <span id="crypto-price">Price: {{ btc_info.price }} $</span>
+            <span id="crypto-change">Change 24h: {{ btc_info.change_24h }}%</span>
+            <span id="crypto-24h-max">24h Max: {{ btc_info.high_24h }} $</span>
+            <span id="crypto-24h-min">24h Min: {{ btc_info.low_24h }} $</span>
+            <span id="crypto-volume">24h Volume: {{ btc_info.volume_24h }}</span>
+            
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- Контейнер для графіка TradingView -->
+            <div class="chart-container">
+                <div id="tradingview-widget-container" style="height: 500px; margin-top: 20px;">
+                    <div id="tradingview-widget" style="height: 100%;"></div>
+                </div>
+            </div>
+
+            <!-- Контейнер таблиці з пагінацією -->
+            <div class="table-pagination-container">
+                
+                <div class="search-container">
+                    <input type="text" id="search" name="search" placeholder="Search..." value="{{ search_query }}" />
+                </div>
+
+                <div class="crypto-list-container">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><a href="?sort=symbol&order={% if sort_by == 'symbol' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ search_query }}&page=1" class="sort-button {% if sort_by == 'symbol' %}active{% endif %}">Symbol</a></th>
+                                    <th><a href="?sort=price&order={% if sort_by == 'price' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ search_query }}&page=1" class="sort-button {% if sort_by == 'price' %}active{% endif %}">Price</a></th>
+                                    <th><a href="?sort=market_cap&order={% if sort_by == 'market_cap' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ search_query }}&page=1" class="sort-button {% if sort_by == 'market_cap' %}active{% endif %}">Market Cap</a></th>
+                                    <th><a href="?sort=volume_24h&order={% if sort_by == 'volume_24h' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ search_query }}&page=1" class="sort-button {% if sort_by == 'volume_24h' %}active{% endif %}">24h Volume</a></th>
+                                    <th><a href="?sort=change_24h&order={% if sort_by == 'change_24h' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ search_query }}&page=1" class="sort-button {% if sort_by == 'change_24h' %}active{% endif %}">Change 24h</a></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for crypto in page_obj %}
+                                <tr class="crypto-row" data-symbol="{{ crypto.symbol }}" data-price="{{ crypto.price }}" data-change="{{ crypto.change_24h }}" data-max="{{ crypto.high_24h }}" data-min="{{ crypto.low_24h }}" data-volume="{{ crypto.volume_24h }}">
+                                    <td>{{ crypto.symbol }}</td>
+                                    <td>{{ crypto.price }}</td>
+                                    <td>{{ crypto.market_cap }}</td>
+                                    <td>{{ crypto.volume_24h }}</td>
+                                    <td>{{ crypto.change_24h }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                        <a href="?sort={{ sort_by }}&order={{ order }}&search={{ search_query }}&page=1">&laquo; Перша</a>
+                        <a href="?sort={{ sort_by }}&order={{ order }}&search={{ search_query }}&page={{ page_obj.previous_page_number }}">Попередня</a>
+                        {% endif %}
+
+                        <span class="current">
+                            Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}.
+                        </span>
+
+                        {% if page_obj.has_next %}
+                        <a href="?sort={{ sort_by }}&order={{ order }}&search={{ search_query }}&page={{ page_obj.next_page_number }}">Наступна</a>
+                        <a href="?sort={{ sort_by }}&order={{ order }}&search={{ search_query }}&page={{ page_obj.paginator.num_pages }}">Остання &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+    // Додаємо script для TradingView
+    (function() {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.async = true;
+        script.src = "https://s3.tradingview.com/tv.js";
+        document.getElementsByTagName('head')[0].appendChild(script);
+    })();
+
+    window.addEventListener("load", function() {
+        var widget = null;  // Перемінна для графіка
+
+        // Функція для оновлення графіка
+        window.updateChart = function(symbol) {
+            if (widget !== null) {
+                widget.remove(); // Видаляємо старий графік
+            }
+
+            widget = new TradingView.widget({
+                "autosize": true,
+                "symbol": symbol, // новий символ
+                "interval": "D",
+                "container_id": "tradingview-widget",
+                "theme": "light",
+                "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "hide_side_toolbar": false,
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "save_image": false
+            });
+        };
+
+        // Ініціалізація графіка за замовчуванням (наприклад, для BTC)
+        updateChart("BINANCE:BTCUSDT");
+    });
+
+    // Обробник кліку для вибору криптовалюти
+    $(document).ready(function() {
+        $('table').on('click', '.crypto-row', function() {
+            var symbol = $(this).data('symbol'); // Отримуємо символ
+            var price = $(this).data('price'); // Отримуємо ціну
+            var change = $(this).data('change'); // Отримуємо зміну за 24 години
+            var max = $(this).data('max'); // Отримуємо максимальну ціну за 24 години
+            var min = $(this).data('min'); // Отримуємо мінімальну ціну за 24 години
+            var volume = $(this).data('volume'); // Отримуємо обсяг за 24 години
+
+            // Оновлюємо всі елементи в інфо-блоці
+            $('#crypto-symbol').text(symbol);
+            $('#crypto-price').text("Price: " + price);
+            $('#crypto-change').text("Change 24h: " + change);
+            $('#crypto-24h-max').text("24h Max: " + max);
+            $('#crypto-24h-min').text("24h Min: " + min);
+            $('#crypto-volume').text("24h Volume: " + volume);
+
+            // Оновлюємо графік
+            updateChart(symbol);
+        });
+
+        // Обробник пошуку
+        $('#search').on('input', function() {
+            var searchQuery = $(this).val();
+
+            // AJAX-запит для оновлення таблиці та пагінації
+            $.ajax({
+                url: '/crypto/',  // Адреса для обробки пошукового запиту
+                data: {
+                    search: searchQuery,  // Параметр пошуку
+                    sort: '{{ sort_by }}',  // Параметр сортування
+                    order: '{{ order }}',  // Параметр напрямку сортування
+                    page: 1  // Сторінка, яку ми обробляємо
+                },
+                success: function(data) {
+                    // Оновлюємо таблицю
+                    $('.crypto-list-container').html($(data).find('.crypto-list-container').html());
+                    $('.pagination').html($(data).find('.pagination').html());
+
+                    // Оновлюємо URL для підтримки пошукового запиту
+                    window.history.pushState({}, '', '/crypto/?search=' + searchQuery + '&sort={{ sort_by }}&order={{ order }}&page=1');
+
+
+                    // Прив'язуємо обробники для кліків на нові елементи таблиці
+                    bindRowClick();
+                }
+            });
+        });
+
+        // Функція для обробки кліків по рядкам таблиці
+        function bindRowClick() {
+            $('table').on('click', '.crypto-row', function() {
+                var symbol = $(this).data('symbol'); // Отримуємо символ криптовалюти
+                updateChart(symbol); // Оновлюємо графік
+
+                // Оновлюємо всі елементи в верхньому блоці
+                $('#crypto-symbol').text(symbol);
+                $('#crypto-price').text("Price: " + $(this).data('price'));
+                $('#crypto-change').text("Change 24h: " + $(this).data('change'));
+                $('#crypto-24h-max').text("24h Max: " + $(this).data('max'));
+                $('#crypto-24h-min').text("24h Min: " + $(this).data('min'));
+                $('#crypto-volume').text("24h Volume: " + $(this).data('volume'));
+            });
+        }
+
+        // Ініціалізація обробників подій для таблиці
+        bindRowClick();
+    });
+</script>
+
+
+
+
+
+{% endblock %}

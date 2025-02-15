@@ -1,96 +1,193 @@
-/* Сучасні стилі для графіка та списку криптовалют */
-
-/* Стилі контейнера для графіка */
-.chart-container {
-    position: relative;
-    height: 500px;
-    width: 1000px;
-    background: linear-gradient(45deg, rgba(75, 192, 192, 0.2), rgba(255, 255, 255, 0.5));
-    border-radius: 10px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-    margin-left: -300px;
-}
-
-/* Стилі для заголовків секцій */
-.section-title {
-    font-size: 24px;
-    color: #00796b;
-    margin-bottom: 15px;
-}
-
-/* Стилі для списку криптовалют */
-.crypto-list {
-    list-style: none;
-    padding: 0;
-    
-}
-
-.crypto-item {
+/* Основний контейнер з flex */
+.container {
+    flex-direction: row; /* Горизонтальне розташування елементів */
+    justify-content: space-between; /* Розподілить простір між елементами */
+    align-items: flex-start; /* Вирівнює елементи по верхньому краю */
+    gap: 20px; /* Проміжок між елементами */
     display: flex;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 12px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    transition: all 0.3s ease;
+    position: relative;
+}
+.crypto-info-line {
+    display: flex;
+    justify-content: space-around; /* Вирівнюємо інформацію по горизонталі з рівними відступами */
+    align-items: center;           /* Вирівнюємо елементи по вертикалі */
+    background-color: #f1f1f1;     /* Світло-сірий фон */
+    color: #333;                   /* Темно-сірий текст */
+    padding: 15px 20px;            /* Відступи всередині */
+    border-radius: 10px;           /* Округлені кути */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Легка тінь для стилю */
+    margin-top: 10px;              /* Відступ від інших елементів */
+}
+
+.crypto-info-line span {
+    font-size: 1rem;               /* Стандартний розмір шрифта */
+    font-weight: 500;               /* Невелика жирність для тексту */
+    text-transform: capitalize;     /* Перше слово з великої літери */
+}
+
+#crypto-symbol {
+    font-size: 1.2rem;             /* Трохи більший розмір для символу криптовалюти */
+    font-weight: 700;               /* Жирний для символу */
+}
+
+#crypto-price, #crypto-change, #crypto-24h-max, #crypto-24h-min, #crypto-volume {
+    color: #007BFF;                /* Синій для цих елементів */
+}
+
+#crypto-change {
+    color: #e74c3c;                /* Червоний для зміни за 24 години */
+}
+
+#crypto-price, #crypto-24h-max, #crypto-24h-min, #crypto-volume {
+    color: #2ecc71;                /* Зелений для ціни, макс/мін 24h і обсягу */
+}
+
+
+/* Контейнер для графіка */
+.chart-container {
+    position: absolute;
+    left: -340px;
+    width: 1000px;
+    top: 7%;
+    height: 600px;  /* Встановлюємо бажану висоту для контейнера */
+}
+
+/* Безпосередньо для елемента з графіком */
+#tradingview-widget-container {
+    height: 100% !important; /* Це забезпечить, щоб контейнер займав всю висоту своєї батьківської області */
+}
+
+#tradingview-widget {
+    height: 100% !important; /* Забезпечить, що сам графік також займає всю доступну висоту */
+}
+
+/* Контейнер для таблиці та пагінації */
+.table-pagination-container 
+{
+    margin-left: 700px;
+
+}
+
+
+
+
+.table-wrapper {
+    margin-top: 20px;
+    overflow-x: auto; /* Додає горизонтальну прокрутку */
+    overflow-y: auto; /* Додає вертикальну прокрутку */
+    width: 100%; /* Встановлює ширину контейнера */
+    max-width: 100%; /* Максимальна ширина контейнера */
+    height: 540px; /* Фіксована висота контейнера */
+    margin: 0 auto; /* Вирівнює контейнер по центру */
+    box-sizing: border-box; /* Включає padding та border в загальну ширину */
+}
+
+/* Таблиця з фіксованою шириною */
+table {
+    min-width: 700px; /* Мінімальна ширина таблиці */
+    width: auto; /* Забезпечує, щоб таблиця не розтягувалась на 100% */
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    overflow: hidden;
+    table-layout: fixed;
+}
+
+/* Заголовки та клітинки */
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Стилі для заголовків таблиці */
+th {
+    background: #30ae69;
+    color: white;
     cursor: pointer;
 }
 
-.crypto-item:hover {
-    background-color: #e0f7fa;
-    transform: translateX(5px);
-}
-
-/* Іконка криптовалюти */
-.crypto-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
-}
-
-/* Стилі для тексту */
-.crypto-item a {
+th a {
+    color: white;
     text-decoration: none;
-    color: #00796b;
-    font-weight: bold;
-    font-size: 16px;
 }
 
-.crypto-item a:hover {
+th a:hover {
     text-decoration: underline;
 }
 
-/* Стилі пагінації */
+
+/* Пагінація */
 .pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.step-links {
+    display: flex;
+    justify-content: center; /* Вирівнює кнопки */
+    gap: 10px;
+    padding: 8px;
+}
+
+.step-links a {
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #30ae69;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: 0.2s;
+}
+
+.step-links a:hover {
+    background: #30ae69;
+    color: white;
+}
+
+/* Стилі для пошуку */
+.search-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
-    font-size: 18px;
+    margin-bottom: 20px;
 }
 
-.pagination span, .pagination a {
-    padding: 10px 20px;
-    margin: 0 5px;
-    background-color: #00796b;
-    color: white;
+.search-container input {
+    padding: 10px;
+    font-size: 16px;
     border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    border: 1px solid #ccc;
+    width: 250px;
+    transition: 0.3s;
 }
 
-.pagination span:hover, .pagination a:hover {
-    background-color: #004d40;
+.search-container input:focus {
+    border-color: #30ae69;
+    outline: none;
+    box-shadow: 0 0 10px rgba(48, 174, 105, 0.5);
+}
+.crypto-row {
+    cursor: pointer; /* Вказівник миші буде змінюватися на руку */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Додаємо ефект переходу для фону та кольору */
 }
 
-/* Мобільна адаптивність */
-@media (max-width: 768px) {
-    .col-md-8, .col-md-4 {
-        width: 100%;
-    }
+.crypto-row:hover {
+    background-color: #f1f1f1; /* Змінюється фон при наведенні */
+    color: #30ae69; /* Змінюється колір тексту на синій */
+}
 
-    .chart-container {
-        height: 300px; /* Зменшена висота для мобільних пристроїв */
-    }
+.crypto-row td {
+    text-align: left;
+}
+
+.crypto-row td:hover {
+    background-color: #f1f1f1; /* Зміна фону в межах клітинки */
+}
+
+.crypto-row td a {
+    text-decoration: none;
+    color: inherit; /* Не змінювати колір тексту в посиланнях */
+}
+
+.crypto-row td:hover a {
+    color: #30ae69; /* Зміна кольору тексту посилання при наведенні */
 }
