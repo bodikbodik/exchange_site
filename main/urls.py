@@ -8,6 +8,9 @@ urlpatterns = [
     path('stocks/', views.stocks, name='stocks'),
     
     path("crypto/", views.crypto, name="crypto"),
+    path('convert_crypto/', views.convert_crypto, name='convert_crypto'),
+    path('get_crypto_news/', views.get_crypto_news, name='get_crypto_news'),
+
 
 
 

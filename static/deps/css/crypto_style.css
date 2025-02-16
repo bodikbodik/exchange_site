@@ -1,75 +1,164 @@
-/* Основний контейнер з flex */
+/* Загальні стилі для контейнерів та елементів */
 .container {
-    flex-direction: row; /* Горизонтальне розташування елементів */
-    justify-content: space-between; /* Розподілить простір між елементами */
-    align-items: flex-start; /* Вирівнює елементи по верхньому краю */
-    gap: 20px; /* Проміжок між елементами */
     display: flex;
+    flex-direction: row; /* Горизонтальне розташування елементів */
+    justify-content: space-between; /* Розподіл простору між елементами */
+    align-items: flex-start; /* Вирівнювання елементів по верхньому краю */
+    gap: 20px; /* Проміжок між елементами */
     position: relative;
+    padding: 30px;
 }
+
+h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+    position: relative;
+    display: inline-block;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 50%;
+    height: 3px;
+    background-color: #30ae69;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+h1:hover::after {
+    width: 100%;
+}
+
+
 .crypto-info-line {
     display: flex;
-    justify-content: space-around; /* Вирівнюємо інформацію по горизонталі з рівними відступами */
-    align-items: center;           /* Вирівнюємо елементи по вертикалі */
-    background-color: #f1f1f1;     /* Світло-сірий фон */
-    color: #333;                   /* Темно-сірий текст */
-    padding: 15px 20px;            /* Відступи всередині */
-    border-radius: 10px;           /* Округлені кути */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Легка тінь для стилю */
-    margin-top: 10px;              /* Відступ від інших елементів */
+    justify-content: space-around;
+    align-items: center;
+    background-color: #f1f1f1;
+    color: #333;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+    opacity: 0;
+    animation: fadeIn 1s ease-out forwards; /* Анімація появи */
 }
 
 .crypto-info-line span {
-    font-size: 1rem;               /* Стандартний розмір шрифта */
-    font-weight: 500;               /* Невелика жирність для тексту */
-    text-transform: capitalize;     /* Перше слово з великої літери */
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: capitalize;
 }
 
 #crypto-symbol {
-    font-size: 1.2rem;             /* Трохи більший розмір для символу криптовалюти */
-    font-weight: 700;               /* Жирний для символу */
+    font-size: 1.2rem;
+    font-weight: 700;
 }
 
 #crypto-price, #crypto-change, #crypto-24h-max, #crypto-24h-min, #crypto-volume {
-    color: #007BFF;                /* Синій для цих елементів */
+    color: #007BFF;
 }
 
 #crypto-change {
-    color: #e74c3c;                /* Червоний для зміни за 24 години */
+    color: #e74c3c;
 }
 
 #crypto-price, #crypto-24h-max, #crypto-24h-min, #crypto-volume {
-    color: #2ecc71;                /* Зелений для ціни, макс/мін 24h і обсягу */
+    color: #2ecc71;
+}
+
+/* Опис анімації для плавного появлення */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px); /* Початкове положення: нижче */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0); /* Кінцеве положення */
+    }
+}
+
+/* Анімація зміни кольору при наведенні */
+.crypto-info-line:hover {
+    background-color: #e9f7f2; /* Легкий зелений фон */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Сильніша тінь */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.crypto-info-line:hover #crypto-price, 
+.crypto-info-line:hover #crypto-24h-max, 
+.crypto-info-line:hover #crypto-24h-min,
+.crypto-info-line:hover #crypto-volume {
+    color: #28a745; /* Зміна кольору на зелений при наведенні */
+}
+
+.crypto-info-line:hover #crypto-change {
+    color: #dc3545; /* Червоний для зміни */
 }
 
 
-/* Контейнер для графіка */
+/* Стилі для графіка */
 .chart-container {
     position: absolute;
     left: -340px;
-    width: 1000px;
+    width: 1100px;
     top: 7%;
-    height: 600px;  /* Встановлюємо бажану висоту для контейнера */
+    height: 600px; /* Встановлюємо бажану висоту для контейнера */
 }
 
-/* Безпосередньо для елемента з графіком */
-#tradingview-widget-container {
+/* Додаємо анімацію для контейнера з графіком */
+#tradingview-widget-container, #tradingview-widget {
     height: 100% !important; /* Це забезпечить, щоб контейнер займав всю висоту своєї батьківської області */
+    opacity: 0;
+    animation: fadeIn 3s ease-in-out forwards; /* Анімація для плавного з'явлення (3 секунди) */
 }
 
-#tradingview-widget {
-    height: 100% !important; /* Забезпечить, що сам графік також займає всю доступну висоту */
+/* Опис анімації */
+@keyframes fadeIn {
+    0% {
+        opacity: 0; /* Початкова прозорість */
+    }
+    100% {
+        opacity: 1; /* Кінцева прозорість */
+    }
 }
 
-/* Контейнер для таблиці та пагінації */
-.table-pagination-container 
-{
-    margin-left: 700px;
 
+
+
+
+#fullscreen-button {
+    position: absolute;
+    top: 25px;
+    right: 10px;
+    width: 50px; /* Ширина кнопки */
+    height: 20px; /* Висота кнопки */
+    background: none; /* Без фону */
+    color: #909caa;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    font-size: 15px;
+    border-radius: 50%; /* Якщо хочеш круглу кнопку */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Центрує текст або іконку всередині */
+    padding: 5px; /* Відступи всередині кнопки для зменшення фону */
 }
 
 
-
+/* Контейнер для таблиці */
+.table-pagination-container {
+    margin-left: 780px;
+}
 
 .table-wrapper {
     margin-top: 20px;
@@ -82,10 +171,9 @@
     box-sizing: border-box; /* Включає padding та border в загальну ширину */
 }
 
-/* Таблиця з фіксованою шириною */
 table {
     min-width: 700px; /* Мінімальна ширина таблиці */
-    width: auto; /* Забезпечує, щоб таблиця не розтягувалась на 100% */
+    width: auto;
     border-collapse: collapse;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
@@ -93,14 +181,12 @@ table {
     table-layout: fixed;
 }
 
-/* Заголовки та клітинки */
 th, td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
-/* Стилі для заголовків таблиці */
 th {
     background: #30ae69;
     color: white;
@@ -116,8 +202,6 @@ th a:hover {
     text-decoration: underline;
 }
 
-
-/* Пагінація */
 .pagination {
     text-align: center;
     margin-top: 20px;
@@ -125,7 +209,7 @@ th a:hover {
 
 .step-links {
     display: flex;
-    justify-content: center; /* Вирівнює кнопки */
+    justify-content: center;
     gap: 10px;
     padding: 8px;
 }
@@ -144,7 +228,6 @@ th a:hover {
     color: white;
 }
 
-/* Стилі для пошуку */
 .search-container {
     display: flex;
     justify-content: center;
@@ -165,14 +248,15 @@ th a:hover {
     outline: none;
     box-shadow: 0 0 10px rgba(48, 174, 105, 0.5);
 }
+
 .crypto-row {
-    cursor: pointer; /* Вказівник миші буде змінюватися на руку */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Додаємо ефект переходу для фону та кольору */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .crypto-row:hover {
-    background-color: #f1f1f1; /* Змінюється фон при наведенні */
-    color: #30ae69; /* Змінюється колір тексту на синій */
+    background-color: #f1f1f1;
+    color: #30ae69;
 }
 
 .crypto-row td {
@@ -180,14 +264,126 @@ th a:hover {
 }
 
 .crypto-row td:hover {
-    background-color: #f1f1f1; /* Зміна фону в межах клітинки */
+    background-color: #f1f1f1;
 }
 
 .crypto-row td a {
     text-decoration: none;
-    color: inherit; /* Не змінювати колір тексту в посиланнях */
+    color: inherit;
 }
 
 .crypto-row td:hover a {
-    color: #30ae69; /* Зміна кольору тексту посилання при наведенні */
+    color: #30ae69;
+}
+
+/* Контейнер для віджету та калькулятора */
+.crypto-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    padding: 30px;
+    gap: 20px;
+}
+
+.tradingview-widget-section {
+    width: 56%; /* Трошки зменшено, щоб між блоками було більше місця */
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 500px;
+}
+
+.tradingview-widget-section:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.crypto-calculator-section {
+    width: 40%;
+    height: 500px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.crypto-calculator-section:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Заголовки */
+h3 {
+    font-size: 1.8rem;
+    color: #333;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Лейбли та поля вводу */
+label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus, button:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+button {
+    background-color: #30ae69;
+    color: white;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Результат конвертації */
+#result {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Посилання на TradingView */
+.tradingview-widget-copyright {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #555;
+}
+
+.tradingview-widget-copyright a {
+    color: #45a049;
+    text-decoration: none;
+}
+
+.tradingview-widget-copyright a:hover {
+    text-decoration: underline;
 }
